@@ -17,7 +17,7 @@ Below PIC provide a high-level design of the demo lab infrastructure
 ---
 
 <p align="center">
-    <img src="images/HLD-Arch.png">
+    <img src="images/HLD-Main-Arch.png">
 </p>
 
 ---
