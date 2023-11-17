@@ -9,3 +9,15 @@ This Repo is created to provide a level of understanding of **Rancher** solution
 </p>
 
 ---
+
+## Demo Architecture
+
+Below PIC provide a high-level design of the demo lab infrastructure
+
+---
+
+<p align="center">
+    <img src="images/HLD-Arch.png">
+</p>
+
+---
