@@ -4,6 +4,9 @@ This Repo is created to help building the first management kubernetes cluster. T
 
 ---
 
+<p align="center">
+    <img src="images/KubernetesLogo.png">
+</p>
 
 ---
 
