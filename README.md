@@ -1,2 +1,11 @@
-# Kubernetes-Demo
-This Repo is used to demo the use of Kubernetes using Rancher Solutions 
+# Kubernetes Demo with Rancher Solutions
+
+This Repo is created to provide a level of understanding of **_Rancher_** solutions offerings, cloud-native architecture, and building a CI/CD pipeline with Rancher product offerings.
+
+---
+
+<p align="center">
+    <img src="images/RancherLogo.png">
+</p>
+
+---
