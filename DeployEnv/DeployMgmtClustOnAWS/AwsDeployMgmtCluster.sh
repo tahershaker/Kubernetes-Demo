@@ -54,7 +54,8 @@ EIP1_NAME="${PREFIX}eip-01" # Add default name for Elastic IP
 IGW_NAME="${PREFIX}igw-01" # Add default name for Internet Gateway
 NATGW1_NAME="${PREFIX}ngw-01" # Add default name for NAT Gateway
 NETLB1A_NAME="${PREFIX}netlb-01a" # Add default name for Network Load Balancer
-LB1_SSH_TG_NAME="${PREFIX}01-ssh-tg-01" # Add default name for 
+LB1_SSH_TG_NAME="${PREFIX}01-ssh-tg-01" # Add default name for load Balancer target group for SSH
+LB1_Kubectl_TG_NAME="${PREFIX}01-kube-tg-01" # Add default name for load Balancer target group for Kubectl
 MHOST_DISK_CONFIG='DeviceName=/dev/sda1,Ebs={VolumeSize=90,DeleteOnTermination=true}'
 WHOST_DISK_CONFIG='DeviceName=/dev/sda1,Ebs={VolumeSize=70,DeleteOnTermination=true}'
 MNODE1A_NAME="${PREFIX}01-master-01" # Add default name for Master Node
@@ -166,7 +167,7 @@ echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
         #-------------------------------------------------------------------------
 
-###################Create Subnets In the VPC#######################################
+################## Create Subnets In the VPC ######################################
 #----------------------------------------------------------------------------------
 echo $GREEN "   Creating Subnets..." $RESET
 #Create First Public Subnet In the First AZ within the Region and Add Tages to it
@@ -190,7 +191,7 @@ NULL=$(aws ec2 create-tags --resources $SUBNET1A_ID --region $REGION --tags Key=
 echo "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
-###############Create Internet Gateway and attached it to the VPC##################
+############## Create Internet Gateway and attached it to the VPC #################
 #----------------------------------------------------------------------------------
 echo $GREEN "   Creating IGW..." $RESET
 IGW_ID=$(aws ec2 create-internet-gateway --region $REGION --output json | jq '.InternetGateway.InternetGatewayId' | sed -e 's/^"//' -e 's/"$//') #Create IGW
@@ -204,7 +205,7 @@ echo "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
         #-------------------------------------------------------------------------
 
-########Create NAT Gateways and Elastic IP to be associated to the NAT Gateways###########
+####### Create NAT Gateways and Elastic IP to be associated to the NAT Gateways ##########
 #-----------------------------------------------------------------------------------------
 echo $GREEN "   Creating NAT Gateways and its Elastic IP(s)..." $RESET
 #Create First NAT Gateway with its elastic IP
@@ -228,7 +229,7 @@ NULL=$(aws ec2 create-tags --resources $NATGW1_ID --region $REGION --tags Key=Ap
         #-------------------------------------------------------------------------
         #-------------------------------------------------------------------------
 
-############################Create Routing Tables##################################
+########################### Create Routing Tables #################################
 #----------------------------------------------------------------------------------
 echo $GREEN "   Creating Routing Tables..." $RESET
 #Create Public Routing Table and Associate Subnets with it and add routes.
@@ -255,7 +256,7 @@ NULL=$(aws ec2 create-route --route-table-id $PRIVRT1_ID --region $REGION --dest
         #-------------------------------------------------------------------------
         #-------------------------------------------------------------------------
 
-############################Create Security Groups##################################
+########################### Create Security Groups #################################
 #----------------------------------------------------------------------------------
 echo $GREEN "   Creating Security Groups..." $RESET
 #Create Public Security Group and add rules to it.
@@ -288,7 +289,7 @@ echo "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
         #-------------------------------------------------------------------------
 
-#########################Create Network Load Balancer##############################
+######################## Create Network Load Balancer #############################
 #----------------------------------------------------------------------------------
 echo $GREEN "   Creating Network Load Balancers..." $RESET
 #Create Network Load Balancer in AZ1 and leave the configuration for a later stage of the script.
@@ -404,7 +405,7 @@ echo "       "
 
 echo $GREEN "Configuring Network Load Balancer Target and Target Groups..." $RESET
 
-#Create SSH Key and add it to the required path
+#Create SSH Target Group for Load Balancing of SSH Traffic
 echo $GREEN "   Creating Target Gourps for SSH Access..." $RESET
 echo $YELLOW "       Creating Target Gourps for LB..."
 LB1_SSH_TG_ARN=$(aws elbv2 create-target-group --name $LB1_SSH_TG_NAME --protocol TCP --port 22 --vpc-id $VPC_ID --output json | jq '.TargetGroups[].TargetGroupArn'| sed -e 's/^"//' -e 's/"$//') # Create Target Group for SSH
@@ -412,6 +413,7 @@ echo $YELLOW "          Target Gourps Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
+# Register Master Node as a Target in the target group
 echo $GREEN "   Registering Targets to Target Gourps..." $RESET
 echo $YELLOW "       Registering Master Node as a Target for SSH Access..."
 NULL=$(aws elbv2 register-targets --target-group-arn $LB1_SSH_TG_ARN --targets Id=$MNODE1A_ID) # Register Master Node as a Target to the Target Group for SSH
@@ -419,6 +421,7 @@ echo $YELLOW "          Master Node Registered." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
+# Create listner for the load balancer on port 22 SSH
 echo $GREEN "   Creating LB Listener..." $RESET
 echo $YELLOW "       Registering Listener for LB for SSH Access..."
 LB1_SSH_LISTNER_ARN=$(aws elbv2 create-listener --load-balancer-arn $NETLB1A_ARN --protocol TCP --port 22 --default-actions Type=forward,TargetGroupArn=$LB1_SSH_TG_ARN --output json | jq '.Listeners[].ListenerArn'| sed -e 's/^"//' -e 's/"$//') # Create a LB Listnere for SSH
@@ -426,24 +429,24 @@ echo $YELLOW "          Listeners Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
-#Create Kubectl Target Group and Register Target and Listener
+#Create Kubectl Target Group for Load Balancing of Kubectl Traffic
 echo $GREEN "   Creating Target Gourps for Kubectl Access..." $RESET
 echo $YELLOW "       Creating Target Gourps for LB..."
-LB1_SSH_TG_ARN=$(aws elbv2 create-target-group --name $LB1_SSH_TG_NAME --protocol TCP --port 6443 --vpc-id $VPC_ID --output json | jq '.TargetGroups[].TargetGroupArn'| sed -e 's/^"//' -e 's/"$//') # Create Target Group for SSH
+LB1_kube_TG_ARN=$(aws elbv2 create-target-group --name $LB1_Kubectl_TG_NAME --protocol TCP --port 6443 --vpc-id $VPC_ID --output json | jq '.TargetGroups[].TargetGroupArn'| sed -e 's/^"//' -e 's/"$//') # Create Target Group for SSH
 echo $YELLOW "          Target Gourps Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
 echo $GREEN "   Registering Targets to Target Gourps..." $RESET
 echo $YELLOW "       Registering Master Node as a Target for Kubectl Access..."
-NULL=$(aws elbv2 register-targets --target-group-arn $LB1_SSH_TG_ARN --targets Id=$MNODE1A_ID) # Register Master Node as a Target to the Target Group for SSH
+NULL=$(aws elbv2 register-targets --target-group-arn $LB1_kube_TG_ARN --targets Id=$MNODE1A_ID) # Register Master Node as a Target to the Target Group for SSH
 echo $YELLOW "          Master Node Registered." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
 echo $GREEN "   Creating LB Listeners..." $RESET
 echo $YELLOW "       Registering Listeners for LB for Kubectl Access..."
-LB1_SSH_LISTNER_ARN=$(aws elbv2 create-listener --load-balancer-arn $NETLB1A_ARN --protocol TCP --port 6443 --default-actions Type=forward,TargetGroupArn=$LB1_SSH_TG_ARN --output json | jq '.Listeners[].ListenerArn'| sed -e 's/^"//' -e 's/"$//') # Create a LB Listnere for SSH
+LB1_kube_LISTNER_ARN=$(aws elbv2 create-listener --load-balancer-arn $NETLB1A_ARN --protocol TCP --port 6443 --default-actions Type=forward,TargetGroupArn=$LB1_kube_TG_ARN --output json | jq '.Listeners[].ListenerArn'| sed -e 's/^"//' -e 's/"$//') # Create a LB Listnere for SSH
 echo $YELLOW "          Listeners Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
@@ -547,8 +550,15 @@ JSON_OUTPUT_V=$(cat <<EOF
                 ],
                 "TargetGroups": [
                         {
-                                "TgName": "$LB1_SSH_TG_NAME",
-                                "TgArn": "$LB1_SSH_TG_ARN"
+                                [
+                                        "TgName": "$LB1_SSH_TG_NAME",
+                                        "TgArn": "$LB1_SSH_TG_ARN"
+                                        ],
+                                [
+                                        "TgName": "$LB1_Kubectl_TG_NAME",
+                                        "TgArn": "$LB1_kube_LISTNER_ARN"
+                                ]
+
                         }
                 ]
         },
