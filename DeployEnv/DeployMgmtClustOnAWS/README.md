@@ -1,6 +1,6 @@
 # Deploy The First - MGMT - Kubernetes Cluster With kubeadm
 
-This Repo is created to help building the first management kubernetes cluster. This cluster will hold all management components such as the **Rancher Manager** and it will be created using default vanilla kubernetes.
+This Repo is created to help building the first management kubernetes cluster. This cluster will hold all management components such as the **Rancher Manager** and it will be created using default vanilla kubernetes configured with kubeadm.
 
 ---
 
