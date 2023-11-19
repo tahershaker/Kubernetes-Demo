@@ -44,8 +44,8 @@ AMI="ami-0ff1c68c6e837b183" #Add default for the AMI ID to be ami-02556c56aa8905
 KEYPAIR_NAME="kube-demo-key-pairs" #Add default for the Key-Pair name to be kube-demo-key-pairs
 KEYPAIR_FILE="${FOLDER}${KEYPAIR_NAME}.pem" # Add default folder path to download EC2 Key-Pair if not exist
 VPC_NAME="${PREFIX}vpc-01" # Add default name for VPC
-SUBNET1_NAME="${PREFIX}public-sub-01" # Add default name for Public Subnet
-SUBNET1A_NAME="${PREFIX}priv-sub-01a" # Add default name for Private Subnet
+SUBNET1_NAME="${PREFIX}pub-sub-01" # Add default name for Public Subnet
+SUBNET1A_NAME="${PREFIX}priv-sub-01" # Add default name for Private Subnet
 PUBRT_NAME="${PREFIX}pub-rt-01" # Add default name for Public Subnet routing table
 PRIVRT1_NAME="${PREFIX}priv-rt-01" # Add default name for Private Subnet Routing Table
 PUBSGROUP_NAME="${PREFIX}pub-sg-01" # Add default name for Public Security Group
@@ -243,8 +243,8 @@ NULL=$(aws ec2 create-tags --resources $PUBRT_ID --region $REGION --tags Key=App
 NULL=$(aws ec2 associate-route-table --subnet-id $SUBNET1_ID --region $REGION --route-table-id $PUBRT_ID) #Associate Subnet To this Routing Table.
 NULL=$(aws ec2 create-route --route-table-id $PUBRT_ID --region $REGION --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID)
         #-------------------------------------------------------------------------
-#Create First Private Routing Table and Associate Subnets with it and add routes.
-echo $YELLOW "      Creating First Private Routing Table..." $RESET
+#Create Private Routing Table and Associate Subnets with it and add routes.
+echo $YELLOW "      Creating Private Routing Table..." $RESET
 PRIVRT1_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --region $REGION --output json | jq '.RouteTable.RouteTableId' | sed -e 's/^"//' -e 's/"$//') #Create Public Route Table
 echo $YELLOW "          Routing Table Created, Routing Table ID is" $BOLD $BLUE $PRIVRT1_ID $RESET
 echo $YELLOW "          Adding Tags to Routing Table..." $RESET
