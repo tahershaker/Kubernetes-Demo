@@ -463,8 +463,9 @@ echo "       "
 
 echo $GREEN "Final Step: Retriving LB public IP..." $RESET
 LB1_ID=$(echo $NETLB1A_ARN | grep / | cut -d/ -f2-)
-LB1_PATH='ELB '
+LB1_PATH="'ELB "
 LB1_PATH+=$LB1_ID
+LB1_PATH+="'"
 LB1_Pub_IP=$(aws ec2 describe-network-interfaces --filters Name=description,Values=$LB1_PATH --output json | jq '.NetworkInterfaces[].Association.PublicIp')
 echo $YELLOW "       LB Public IP Retrived. Public IP is" $LB1_Pub_IP
 
