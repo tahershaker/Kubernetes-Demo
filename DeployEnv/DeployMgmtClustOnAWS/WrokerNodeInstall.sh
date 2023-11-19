@@ -42,6 +42,12 @@ sudo systemctl restart containerd
 #References: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 #   Let IPTables to see the bridged traffic.
 
+#--------- The legacy package repositories have been deprecated and frozen starting from September 13, 2023. 
+#--------- Need to add key for new package repository
+# Add pkgs.k8s.io package repositories Key to be able to download containerd and other required software
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
 # Configure Bridge NetFilter
 sudo modprobe br_netfilter
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -59,12 +65,6 @@ sudo sysctl --system
 
 #   Update the apt package index and install required packages 
 sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl ipvsadm ipset watch tcpdump gpg
-
-#   Download the public signing key for the Kubernetes package repositories
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-#   Add the Kubernetes apt repository
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 #   Update apt package index, install kubelet, kubeadm and kubectl, and pin their version
 sudo apt-get update && sudo apt-get install -y kubelet=${KUBEVERSION} kubeadm=${KUBEVERSION} kubectl=${KUBEVERSION}

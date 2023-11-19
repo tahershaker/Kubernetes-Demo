@@ -7,7 +7,14 @@ SVCCIDR=172.29.0.0/16
 #References: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
 #   Load kernel modules and modify system settings as a prerequisites (Overlay - Netfilter - IpForwarding).
 
-# Modify system setting and configuration by adding overlay and br_netfilter
+#--------- The legacy package repositories have been deprecated and frozen starting from September 13, 2023. 
+#--------- Need to add key for new package repository
+# Add pkgs.k8s.io package repositories Key to be able to download containerd and other required software
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+
+# Modify system setting and configuration for containerd installation by adding overlay and br_netfilter
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
@@ -63,7 +70,7 @@ sudo sysctl --system
 sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl ipvsadm ipset watch tcpdump gpg
 
 #   Download the public signing key for the Kubernetes package repositories
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.26/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 #   Add the Kubernetes apt repository
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
