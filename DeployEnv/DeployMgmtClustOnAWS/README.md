@@ -117,13 +117,33 @@ WNODE1B_IP="10.10.11.102" # Add default IP address for Worker Node 2
 JSON_FILE="${FOLDER}resources-ids-$(date '+%Y-%m-%d-%H-%M-%S').json"
 ```
 
-To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
+> Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
 
-Make the script file excusable:
+1. Go to the script location and make the script file excusable, Script name is AwsDeployMgmtCluster.sh
+
 ```bash 
 chmod u+x AwsDeployMgmtCluster.sh
 ```
 <p align="center">
     <img src="images/ScriptExcutable.png">
 </p>
+
+2. Run the Script 
+
+```bash
+./AwsDeployMgmtCluster.sh
+```
+<p align="center">
+    <img src="images/RunScript.png">
+</p>
+
+> Please Note: If you like to see the output of the script after a successful competition, please refer to this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/images/KubernetesLogo.png)
+
+3. Get the Public Ip of the Load balancer.
+
+Once the script successfully completed, it will print the public IP of the load balancer at the end of the script. Copy this IP and save it somewhere.
+
+---
+
+### Install Kubernetes Cluster on EC2 Instances
 
