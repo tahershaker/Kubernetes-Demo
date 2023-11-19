@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 KUBEVERSION=1.26.4-00
 
+
+#--------- The legacy package repositories have been deprecated and frozen starting from September 13, 2023. 
+#--------- Need to add key for new package repository
+# Add pkgs.k8s.io package repositories Key to be able to download containerd and other required software
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+
 #Install Containerd On Server
 #References: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
 #   Load kernel modules and modify system settings as a prerequisites (Overlay - Netfilter - IpForwarding).
@@ -41,12 +49,6 @@ sudo systemctl restart containerd
 #Install Kubeadm and Kubernetes Components using Kubeadm
 #References: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 #   Let IPTables to see the bridged traffic.
-
-#--------- The legacy package repositories have been deprecated and frozen starting from September 13, 2023. 
-#--------- Need to add key for new package repository
-# Add pkgs.k8s.io package repositories Key to be able to download containerd and other required software
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 # Configure Bridge NetFilter
 sudo modprobe br_netfilter
