@@ -31,7 +31,10 @@ RESET=$(tput sgr0)
 
 # Create Environment Variables to be used with the script and the AWS CLI commands
 S_DIR=$(dirname "$0") # Get PWD of the running Script
-REGION="eu-west-2" #Add default for the region to be Ireland Region
+MN01_1_CONF="${S_DIR}/ConfigFiles/kube-demo-mn01.yml" # Add File path for the CloudInit config file for the master node
+WN01_1_CONF="${S_DIR}/ConfigFiles/kube-demo-wn01.yml" # Add File path for the CloudInit config file for the first worker node
+WN02_1_CONF="${S_DIR}/ConfigFiles/kube-demo-wn02.yml" # Add File path for the CloudInit config file for the second worker node
+REGION="eu-west-2" #Add default for the region to be London Region
 AZ1="${REGION}a" # Add defualt Availability Zone
 OWNER="Taher" #Add default for the owner to be Taher
 PREFIX="kube-demo-Mgmt-" #Add default for the prefix used with the names of all resources to be kube-demo-
@@ -341,7 +344,7 @@ fi
 
 #Create First Master Node 
 echo $GREEN "   Creating First Master Node..." $RESET
-MNODE1A_ID=$(aws ec2 run-instances --region $REGION --image-id $AMI --count 1 --instance-type t2.xlarge --key-name $KEYPAIR_NAME --security-group-ids $PRIVSGROUP_ID --subnet-id $SUBNET1A_ID --block-device-mappings $MHOST_DISK_CONFIG --private-ip-address $MNODE1A_IP --output json | jq '.Instances[].InstanceId'| sed -e 's/^"//' -e 's/"$//') #Create EC2 Instance
+MNODE1A_ID=$(aws ec2 run-instances --region $REGION --image-id $AMI --count 1 --instance-type t2.xlarge --key-name $KEYPAIR_NAME --security-group-ids $PRIVSGROUP_ID --subnet-id $SUBNET1A_ID --block-device-mappings $MHOST_DISK_CONFIG --private-ip-address $MNODE1A_IP --user-data file://${MN01_1_CONF} --output json | jq '.Instances[].InstanceId'| sed -e 's/^"//' -e 's/"$//') #Create EC2 Instance
 echo $YELLOW "       Master Node Created, Master Node ID is" $BOLD $BLUE $MNODE1A_ID $RESET
 echo $YELLOW "          Adding Tags to Master Node..." $RESET
 NULL=$(aws ec2 create-tags --resources $MNODE1A_ID --region $REGION --tags Key=Name,Value=$MNODE1A_NAME) #Create a Tage for the EC2 Instance Name
@@ -352,7 +355,7 @@ NULL=$(aws ec2 modify-instance-attribute --source-dest-check "{\"Value\": false}
         #-------------------------------------------------------------------------
 #Create First Worker Node 
 echo $GREEN "   Creating First Worker Node..." $RESET
-WNODE1A_ID=$(aws ec2 run-instances --region $REGION --image-id $AMI --count 1 --instance-type t2.xlarge --key-name $KEYPAIR_NAME --security-group-ids $PRIVSGROUP_ID --subnet-id $SUBNET1A_ID --block-device-mappings $WHOST_DISK_CONFIG --private-ip-address $WNODE1A_IP --output json | jq '.Instances[].InstanceId'| sed -e 's/^"//' -e 's/"$//') #Create EC2 Instance
+WNODE1A_ID=$(aws ec2 run-instances --region $REGION --image-id $AMI --count 1 --instance-type t2.xlarge --key-name $KEYPAIR_NAME --security-group-ids $PRIVSGROUP_ID --subnet-id $SUBNET1A_ID --block-device-mappings $WHOST_DISK_CONFIG --private-ip-address $WNODE1A_IP --user-data file://${WN01_1_CONF} --output json | jq '.Instances[].InstanceId'| sed -e 's/^"//' -e 's/"$//') #Create EC2 Instance
 echo $YELLOW "       Worker Node Created, Worker Node ID is" $BOLD $BLUE $WNODE1A_ID $RESET
 echo $YELLOW "          Adding Tags to Worker Node..." $RESET
 NULL=$(aws ec2 create-tags --resources $WNODE1A_ID --region $REGION --tags Key=Name,Value=$WNODE1A_NAME) #Create a Tage for the EC2 Instance Name
@@ -363,7 +366,7 @@ NULL=$(aws ec2 modify-instance-attribute --region $REGION --source-dest-check "{
         #-------------------------------------------------------------------------
 #Create Second Worker Node
 echo $GREEN "   Creating Second Worker Node..." $RESET
-WNODE1B_ID=$(aws ec2 run-instances --region $REGION --image-id $AMI --count 1 --instance-type t2.xlarge --key-name $KEYPAIR_NAME --security-group-ids $PRIVSGROUP_ID --subnet-id $SUBNET1A_ID --block-device-mappings $WHOST_DISK_CONFIG --private-ip-address $WNODE1B_IP --output json | jq '.Instances[].InstanceId'| sed -e 's/^"//' -e 's/"$//') #Create EC2 Instance
+WNODE1B_ID=$(aws ec2 run-instances --region $REGION --image-id $AMI --count 1 --instance-type t2.xlarge --key-name $KEYPAIR_NAME --security-group-ids $PRIVSGROUP_ID --subnet-id $SUBNET1A_ID --block-device-mappings $WHOST_DISK_CONFIG --private-ip-address $WNODE1B_IP --user-data file://${WN02_1_CONF} --output json | jq '.Instances[].InstanceId'| sed -e 's/^"//' -e 's/"$//') #Create EC2 Instance
 echo $YELLOW "       Worker Node Created, Worker Node ID is" $BOLD $BLUE $WNODE1B_ID $RESET
 echo $YELLOW "          Adding Tags to Worker Node..." $RESET
 NULL=$(aws ec2 create-tags --resources $WNODE1B_ID --region $REGION --tags Key=Name,Value=$WNODE1B_NAME) #Create a Tage for the EC2 Instance Name
@@ -445,7 +448,17 @@ echo $YELLOW "          Listeners Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
-echo $GREEN "Retriving LB public IP..." $RESET
+echo "       "
+echo $GREEN "=======================================================================" $RESET
+echo "       "
+
+#=================================================================================
+
+################################################################################
+# Section 8: Retrieve Load Balancer Public IP
+###############################################################################
+
+echo $GREEN "Final Step: Retriving LB public IP..." $RESET
 LB1_ID=$(echo $NETLB1A_ARN | grep / | cut -d/ -f2-)
 LB1_PATH='ELB '
 LB1_PATH+=$LB1_ID
@@ -459,7 +472,7 @@ echo "       "
 #=================================================================================
 
 ################################################################################
-# Section 8: Create Output JSON file and dump it
+# Section 9: Create Output JSON file and dump it
 ###############################################################################
 
 echo $GREEN "Adding all provisioned reources's ID to a JSON file..." $RESET
