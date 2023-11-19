@@ -65,5 +65,9 @@ To use this repo, there are several steps to be executed which most of the are a
 
 ---
 
-Once the above tasks are completed successfully, you can start with the Demo and showing the Use cases. _Please Note:_ During the completion of the above tasks, some of the use cases may have been already covered such as deploying an RKE cluster through Rancher Manager or linking an EKS cluster to Rancher Manager.
+Once the above tasks are completed successfully, you can start with the Demo and showing the Use cases. 
+
+_Please Note:_ During the completion of the above tasks, some of the use cases may have been already covered such as deploying an RKE cluster through Rancher Manager or linking an EKS cluster to Rancher Manager.
+
+To help with th demo and showing the use cases, please refer to this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/UseCases)
 
