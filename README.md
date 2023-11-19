@@ -56,16 +56,12 @@ To use this repo, there are several steps to be executed which most of the are a
 ---
 
 1. Deploy The Management Environment and Install all Required Components
-
-... To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployMgmtClustOnAWS).
-
-... Once this is completed, the management cluster will be up and running and all management components (including Rancher Manager) will be deployed.
+   - To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployMgmtClustOnAWS).
+   - Once this is completed, the management cluster will be up and running and all management components (including Rancher Manager) will be deployed.
 2. Deploy the RKE Environment
-
-... To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployRkeClusterOnAWS).
+   - To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployRkeClusterOnAWS).
 3. Deploy the EKS Environment
-
-... To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployEksClusterOnAWS).
+   - To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployEksClusterOnAWS).
 
 ---
 
