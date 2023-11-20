@@ -128,7 +128,7 @@ chmod u+x AwsDeployMgmtCluster.sh
     <img src="images/ScriptExcutable.png">
 </p>
 
-2. Run the Script 
+2. Run the Script, Please Note: Running the script is going to take several minutes.
 
 ```bash
 ./AwsDeployMgmtCluster.sh
@@ -136,8 +136,6 @@ chmod u+x AwsDeployMgmtCluster.sh
 <p align="center">
     <img src="images/RunScript.png">
 </p>
-
-> Please Note: If you like to see the output of the script after a successful competition, please refer to this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/images/KubernetesLogo.png)
 
 3. Get the Public FQDN and IP of the Load balancer.
 
@@ -147,6 +145,16 @@ nslookup <fqdn>
 ```
 <p align="center">
     <img src="images/GetFqdnIp.png">
+</p>
+
+- The Output of starting the script should look like
+<p align="center">
+    <img src="images/StartOfScript.png">
+</p>
+
+- The output of the end of the script should look like
+<p align="center">
+    <img src="images/EndOfScript.png">
 </p>
 
 ---

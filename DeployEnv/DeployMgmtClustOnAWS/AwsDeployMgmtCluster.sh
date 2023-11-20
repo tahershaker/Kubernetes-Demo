@@ -568,11 +568,7 @@ echo $JSON_OUTPUT_V > $JSON_FILE
 
         #-------------------------------------------------------------------------
 
-
-echo "       "
 echo "       "
 echo $GREEN "All resources have been provisioned and configured as needed. Enjoy...." $RESET
 echo $GREEN "=======================================================================" $RESET
-echo "       "
-echo $GREEN "=======================================================================" $RESET
-echo "       "
+
