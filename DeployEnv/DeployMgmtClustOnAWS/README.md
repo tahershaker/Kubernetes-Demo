@@ -139,9 +139,15 @@ chmod u+x AwsDeployMgmtCluster.sh
 
 > Please Note: If you like to see the output of the script after a successful competition, please refer to this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/images/KubernetesLogo.png)
 
-3. Get the Public Ip of the Load balancer.
+3. Get the Public FQDN and IP of the Load balancer.
 
-Once the script successfully completed, it will print the public IP of the load balancer at the end of the script. Copy this IP and save it somewhere.
+Once the script successfully completed, it will print the public FQDN of the load balancer at the end of the script. Copy this IFQDN and save it somewhere. Also use nslookup to get the IP of the FQDN and save it with the FQDN.
+```bash 
+nslookup <fqdn>
+```
+<p align="center">
+    <img src="images/GetFqdnIp.png">
+</p>
 
 ---
 

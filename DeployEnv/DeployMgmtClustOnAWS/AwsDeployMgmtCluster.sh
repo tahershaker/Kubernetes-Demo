@@ -440,20 +440,10 @@ echo "       "
 # Section 8: Retrieve Load Balancer Public IP
 ###############################################################################
 
-echo $GREEN "Final Step: Retriving Info..." $RESET
-echo $GREEN "   Retriving LB IP..." $RESET
-LB1_ID=$(echo $NETLB1A_ARN | grep / | cut -d/ -f2-)
-LB1_PATH="'ELB "
-LB1_PATH+=$LB1_ID
-LB1_PATH+="'"
-LB1_Pub_IP=$(aws ec2 describe-network-interfaces --region $REGION --filters Name=description,Values=$LB1_PATH --output json | jq '.NetworkInterfaces[].Association.PublicIp')
-echo $YELLOW "       LB Public IP Retrived. Public IP is" $LB1_Pub_IP
-echo  "   ----------------------------------" $RESET
+echo $GREEN "Retriving Load Balancer Info..." $RESET
 echo $GREEN "   Retriving LB Public FQDN..." $RESET
-
-
 LB1_FQDN=$(aws elbv2 describe-load-balancers --region $REGION --name $NETLB1A_NAME --output json | jq '.LoadBalancers[].DNSName')
-echo $YELLOW "       LB Public FQDN Retrived. Public FQDN is" $LB1_FQDN
+echo $YELLOW "       LB Public FQDN Retrived. Public FQDN is" $LB1_FQDN $RESET
 echo  "   ----------------------------------" $RESET
 
 
@@ -534,7 +524,6 @@ JSON_OUTPUT_V=$(cat <<EOF
                         {
                                 "LbName": "$NETLB1A_NAME",
                                 "LbArn": "$NETLB1A_ARN",
-                                "LbPubIP": "$LB1_Pub_IP",
                                 "LbFQDN": "$LB1_FQDN"
                         }      
                 ],
