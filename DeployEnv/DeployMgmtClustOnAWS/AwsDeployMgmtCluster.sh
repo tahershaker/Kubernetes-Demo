@@ -429,27 +429,6 @@ echo $YELLOW "          Listeners Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
 
-#Create Kubectl Target Group for Load Balancing of Kubectl Traffic
-echo $GREEN "   Creating Target Gourps for Kubectl Access..." $RESET
-echo $YELLOW "       Creating Target Gourps for LB..."
-LB1_kube_TG_ARN=$(aws elbv2 create-target-group --name $LB1_Kubectl_TG_NAME --protocol TCP --port 6443 --vpc-id $VPC_ID --output json | jq '.TargetGroups[].TargetGroupArn'| sed -e 's/^"//' -e 's/"$//') # Create Target Group for SSH
-echo $YELLOW "          Target Gourps Created." $RESET
-echo  "   ----------------------------------" $RESET
-        #-------------------------------------------------------------------------
-
-echo $GREEN "   Registering Targets to Target Gourps..." $RESET
-echo $YELLOW "       Registering Master Node as a Target for Kubectl Access..."
-NULL=$(aws elbv2 register-targets --target-group-arn $LB1_kube_TG_ARN --targets Id=$MNODE1A_ID) # Register Master Node as a Target to the Target Group for SSH
-echo $YELLOW "          Master Node Registered." $RESET
-echo  "   ----------------------------------" $RESET
-        #-------------------------------------------------------------------------
-
-echo $GREEN "   Creating LB Listeners..." $RESET
-echo $YELLOW "       Registering Listeners for LB for Kubectl Access..."
-LB1_kube_LISTNER_ARN=$(aws elbv2 create-listener --load-balancer-arn $NETLB1A_ARN --protocol TCP --port 6443 --default-actions Type=forward,TargetGroupArn=$LB1_kube_TG_ARN --output json | jq '.Listeners[].ListenerArn'| sed -e 's/^"//' -e 's/"$//') # Create a LB Listnere for SSH
-echo $YELLOW "          Listeners Created." $RESET
-echo  "   ----------------------------------" $RESET
-        #-------------------------------------------------------------------------
 
 echo "       "
 echo $GREEN "=======================================================================" $RESET
@@ -551,15 +530,8 @@ JSON_OUTPUT_V=$(cat <<EOF
                 ],
                 "TargetGroups": [
                         {
-                                [
-                                        "TgName": "$LB1_SSH_TG_NAME",
-                                        "TgArn": "$LB1_SSH_TG_ARN"
-                                        ],
-                                [
-                                        "TgName": "$LB1_Kubectl_TG_NAME",
-                                        "TgArn": "$LB1_kube_LISTNER_ARN"
-                                ]
-
+                                "TgName": "$LB1_SSH_TG_NAME",
+                                "TgArn": "$LB1_SSH_TG_ARN"
                         }
                 ]
         },
