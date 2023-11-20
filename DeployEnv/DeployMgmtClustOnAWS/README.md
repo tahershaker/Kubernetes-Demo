@@ -237,4 +237,12 @@ kubectl get nodes
     <img src="images/GetNodes.png">
 </p>
 
+12. Ensure all pods are running with not exceptions to any pod
+```bash
+kubectl get pods -A
+```
+<p align="center">
+    <img src="images/GetPods.png">
+</p>
+
 
