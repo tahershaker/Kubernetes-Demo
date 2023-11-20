@@ -306,7 +306,30 @@ kubectl get services ingress-nginx-controller --namespace=ingress-nginx
 8. In AWS, create 2 Target Groups (one for http port 80 and one for https port 443) with the port number you got and register the master node with these target groups
 
 9. Test Ingress is working properly
-   - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yml, then edit this file and copy the content of the yaml file in this [link]() and past it in the file you just created
-   ```bash
+   - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yaml, then edit this file and copy the content of the yaml file in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/YamlFiles/TestIngress.yaml) and past it in the file you just created. Once pasted the content, change the `<put-your-loadbalancer-fqdn-here>` with your load balancer public IP FQDN that you got from running the first script which you should have saved it somewhere. The apply the file using `kubectl apply -f file-name.yaml` command
+```bash
+touch yaml-config/nginx-ingress/test-ingress.yaml
+vi yaml-config/nginx-ingress/test-ingress.yaml
+kubectl apply -f yaml-config/nginx-ingress/test-ingress.yaml
+```
+<p align="center">
+    <img src="images/ChangeUrl.png">
+</p>
 
-   ```
+<p align="center">
+    <img src="images/DeployTestIngress.png">
+</p>
+ 
+   - Check the Ingress is deployed properly 
+```bash
+kubectl get ingress nginx-test-ingress -n nginx-testing
+```
+<p align="center">
+    <img src="images/CheckIngress.png">
+</p>
+
+   - Open the URL to check if the implementation is working properly using the URL `http://kube-demo-mgmt-netlb-01a-b940619f91deacbc.elb.eu-west-2.amazonaws.com/nginx`
+
+<p align="center">
+    <img src="images/UlrCheck.png">
+</p>
