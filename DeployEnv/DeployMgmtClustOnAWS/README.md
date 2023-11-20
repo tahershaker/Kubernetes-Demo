@@ -145,7 +145,7 @@ Once the script successfully completed, it will print the public IP of the load 
 
 ---
 
-### Step 2: Install Kubernetes Cluster on EC2 Instances
+### Step 2: Install Kubernetes Cluster on EC2 Instances using Kubeadm
 
 > Please Note: In this step we will be accessing the Master Node using SSH, the KeyPair to be used with the SSH should be already in our local machine. Either you already have it or the script above will create it and download it to your local machine. By default the script will download it in the location where you ran the script and will have the name of kube-demo-key-pairs
 
@@ -246,3 +246,67 @@ kubectl get pods -A
 </p>
 
 
+### Step 3: Install Ingress on the Kubernetes Cluster
+
+1. SSH to the Master node and create a folder to add all yaml files that will be used with the demo. Then create a sub-folder to download the Nginx Ingress Yaml file to it
+```bash
+mkdir yaml-config
+mkdir yaml-config/nginx-ingress
+```
+<p align="center">
+    <img src="images/CreateFolder.png">
+</p>
+
+2. Open a web-browser on your local machine and download the yaml file to your local machine from this URL: https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml
+
+3. When deploying Rancher Manager using Helm Chart, note that the Rancher Helm chart does not set an `ingressClassName` on the ingress by default. Because of this, you have to configure the Ingress controller to also watch ingresses without an `ingressClassName`
+   - To do so, we need to add the argument `--watch-ingress-without-class=true` in the downloaded yaml file.
+     - Open the Yaml file with an editor of your choice (ex: VSCode)
+     - After line number 424 where the container sepc section is and argument, add the argument `--watch-ingress-without-class=true`
+     - Save the file after editing it
+       - Reference: https://ranchermanager.docs.rancher.com/pages-for-subheaders/install-upgrade-on-a-kubernetes-cluster
+       - Reference: https://kubernetes.github.io/ingress-nginx/user-guide/k8s-122-migration/#what-is-the-flag-watch-ingress-without-class
+<p align="center">
+    <img src="images/ArgAdded.png">
+</p>
+
+4. In the SSH session to the master node, create a file called deploy.yaml in the folder yaml-config/nginx-ingress then copy the content of the deploy yaml file in your local machine to this file.
+```bash
+touch yaml-config/nginx-ingress/deploy.yaml
+vi yaml-config/nginx-ingress/deploy.yaml
+```
+<p align="center">
+    <img src="images/CreateFile.png">
+</p>
+
+5. Deploy the Nginx Ingress Controller
+```bash
+kubectl apply -f yaml-config/nginx-ingress/deploy.yaml
+```
+<p align="center">
+    <img src="images/DeployIngress.png">
+</p>
+
+6. Ensure Nginx Ingress Controller pod is running
+```bash
+kubectl get pods -n ingress-nginx
+```
+<p align="center">
+    <img src="images/IngressPod.png">
+</p>
+
+7. Get the port numbers that Ingress listen for port 80 and 443 and save them somewhere
+```bash
+kubectl get services ingress-nginx-controller --namespace=ingress-nginx
+```
+<p align="center">
+    <img src="images/IngressPorts.png">
+</p>
+
+8. In AWS, create 2 Target Groups (one for http port 80 and one for https port 443) with the port number you got and register the master node with these target groups
+
+9. Test Ingress is working properly
+   - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yml, then edit this file and copy the content of the yaml file in this [link]() and past it in the file you just created
+   ```bash
+
+   ```

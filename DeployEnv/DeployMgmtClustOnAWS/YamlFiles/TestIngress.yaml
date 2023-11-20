@@ -1,0 +1,67 @@
+# Create the Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-testing
+  labels:
+    app: nginx-web
+
+---
+
+# Create The Nginx Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-test
+  namespace: nginx-testing
+  labels:
+    app: nginx-web
+spec:
+  containers:
+  - name: nginx
+    image: nginx:stable
+    ports:
+      - containerPort: 80
+
+---
+
+# Create The Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: nginx-testing
+  labels:
+    app: nginx-web
+spec:
+  selector:
+    app: nginx-web
+  ports:
+  - port: 8000 
+    targetPort: 80
+    protocol: TCP
+
+---
+
+# Create The Ingress Rule Configuration
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-test-ingress
+  namespace: nginx-testing
+  annotations:
+    ingress.kubernetes.io/add-base-url: 'true'
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
+spec:
+  rules:
+  - host: "<put-your-loadbalancer-fqdn-here>"
+    http:
+      paths:
+      - path: /nginx
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 8000
