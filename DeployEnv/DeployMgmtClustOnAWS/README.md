@@ -390,6 +390,7 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ### Step 5: Deploy and Install Cert Manager using Helm
 
 As Rancher management server is designed to be secure by default and requires SSL/TLS configuration, we will be installing Cert Manager to you kubernetes cluster using Helm charts. On the Master Node using the SSH Session, do the following:
+- References: https://cert-manager.io/docs/installation/helm/
 
 1. Add repo to helm to download Cert manager from and update Helm
 ```bash
@@ -434,6 +435,7 @@ kubectl get pods -n cert-manager
 ### Step 6: Deploy Rancher using Helm
 
 Rancher is installed using the Helm package manager for Kubernetes.
+- References: https://ranchermanager.docs.rancher.com/pages-for-subheaders/install-upgrade-on-a-kubernetes-cluster
 
 1. Add the Helm Chart Repository - We will use the Sable version
 ```bash
@@ -452,3 +454,10 @@ kubectl create namespace cattle-system
     <img src="images/AddRancherNS.png">
 </p>
 
+3. Install Rancher Using Helm, Change the Put-FQDN with the FQDN of the load balancer you get from the output of the first script where you should have saved it somewhere
+```bash
+helm install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --set hostname=kube-demo-mgmt-netlb-01a-b940619f91deacbc.elb.eu-west-2.amazonaws.com \
+  --set bootstrapPassword=admin
+```

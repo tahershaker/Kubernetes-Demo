@@ -408,7 +408,7 @@ echo $GREEN "Configuring Network Load Balancer Target and Target Groups..." $RES
 #Create SSH Target Group for Load Balancing of SSH Traffic
 echo $GREEN "   Creating Target Gourps for SSH Access..." $RESET
 echo $YELLOW "       Creating Target Gourps for LB..."
-LB1_SSH_TG_ARN=$(aws elbv2 create-target-group --name $LB1_SSH_TG_NAME --protocol TCP --port 22 --vpc-id $VPC_ID --output json | jq '.TargetGroups[].TargetGroupArn'| sed -e 's/^"//' -e 's/"$//') # Create Target Group for SSH
+LB1_SSH_TG_ARN=$(aws elbv2 create-target-group --region $REGION --name $LB1_SSH_TG_NAME --protocol TCP --port 22 --vpc-id $VPC_ID --output json | jq '.TargetGroups[].TargetGroupArn'| sed -e 's/^"//' -e 's/"$//') # Create Target Group for SSH
 echo $YELLOW "          Target Gourps Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
@@ -416,7 +416,7 @@ echo  "   ----------------------------------" $RESET
 # Register Master Node as a Target in the target group
 echo $GREEN "   Registering Targets to Target Gourps..." $RESET
 echo $YELLOW "       Registering Master Node as a Target for SSH Access..."
-NULL=$(aws elbv2 register-targets --target-group-arn $LB1_SSH_TG_ARN --targets Id=$MNODE1A_ID) # Register Master Node as a Target to the Target Group for SSH
+NULL=$(aws elbv2 register-targets --region $REGION --target-group-arn $LB1_SSH_TG_ARN --targets Id=$MNODE1A_ID) # Register Master Node as a Target to the Target Group for SSH
 echo $YELLOW "          Master Node Registered." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
@@ -424,7 +424,7 @@ echo  "   ----------------------------------" $RESET
 # Create listner for the load balancer on port 22 SSH
 echo $GREEN "   Creating LB Listener..." $RESET
 echo $YELLOW "       Registering Listener for LB for SSH Access..."
-LB1_SSH_LISTNER_ARN=$(aws elbv2 create-listener --load-balancer-arn $NETLB1A_ARN --protocol TCP --port 22 --default-actions Type=forward,TargetGroupArn=$LB1_SSH_TG_ARN --output json | jq '.Listeners[].ListenerArn'| sed -e 's/^"//' -e 's/"$//') # Create a LB Listnere for SSH
+LB1_SSH_LISTNER_ARN=$(aws elbv2 create-listener --region $REGION --load-balancer-arn $NETLB1A_ARN --protocol TCP --port 22 --default-actions Type=forward,TargetGroupArn=$LB1_SSH_TG_ARN --output json | jq '.Listeners[].ListenerArn'| sed -e 's/^"//' -e 's/"$//') # Create a LB Listnere for SSH
 echo $YELLOW "          Listeners Created." $RESET
 echo  "   ----------------------------------" $RESET
         #-------------------------------------------------------------------------
@@ -440,13 +440,22 @@ echo "       "
 # Section 8: Retrieve Load Balancer Public IP
 ###############################################################################
 
-echo $GREEN "Final Step: Retriving LB public IP..." $RESET
+echo $GREEN "Final Step: Retriving Info..." $RESET
+echo $GREEN "   Retriving LB IP..." $RESET
 LB1_ID=$(echo $NETLB1A_ARN | grep / | cut -d/ -f2-)
 LB1_PATH="'ELB "
 LB1_PATH+=$LB1_ID
 LB1_PATH+="'"
-LB1_Pub_IP=$(aws ec2 describe-network-interfaces --filters Name=description,Values=$LB1_PATH --output json | jq '.NetworkInterfaces[].Association.PublicIp')
+LB1_Pub_IP=$(aws ec2 describe-network-interfaces --region $REGION --filters Name=description,Values=$LB1_PATH --output json | jq '.NetworkInterfaces[].Association.PublicIp')
 echo $YELLOW "       LB Public IP Retrived. Public IP is" $LB1_Pub_IP
+echo  "   ----------------------------------" $RESET
+echo $GREEN "   Retriving LB Public FQDN..." $RESET
+
+
+LB1_FQDN=$(aws elbv2 describe-load-balancers --region $REGION --name $NETLB1A_NAME --output json | jq '.LoadBalancers[].DNSName')
+echo $YELLOW "       LB Public FQDN Retrived. Public FQDN is" $LB1_FQDN
+echo  "   ----------------------------------" $RESET
+
 
 echo "       "
 echo $GREEN "=======================================================================" $RESET
@@ -498,7 +507,7 @@ JSON_OUTPUT_V=$(cat <<EOF
                 "NatGw": [
                         {
                                 "GwName": "$NATGW1_NAME",
-                                "GwId" "$NATGW1_ID"
+                                "GwId": "$NATGW1_ID"
                         }
                 ],
                 "RoutingTable": [
@@ -525,7 +534,8 @@ JSON_OUTPUT_V=$(cat <<EOF
                         {
                                 "LbName": "$NETLB1A_NAME",
                                 "LbArn": "$NETLB1A_ARN",
-                                "LbPubIP": "$LB1_Pub_IP"
+                                "LbPubIP": "$LB1_Pub_IP",
+                                "LbFQDN": "$LB1_FQDN"
                         }      
                 ],
                 "TargetGroups": [
