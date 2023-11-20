@@ -386,3 +386,69 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 <p align="center">
     <img src="images/HelmInstall.png">
 </p>
+
+### Step 5: Deploy and Install Cert Manager using Helm
+
+As Rancher management server is designed to be secure by default and requires SSL/TLS configuration, we will be installing Cert Manager to you kubernetes cluster using Helm charts. On the Master Node using the SSH Session, do the following:
+
+1. Add repo to helm to download Cert manager from and update Helm
+```bash
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+```
+
+<p align="center">
+    <img src="images/AddHelmRepo.png">
+</p>
+
+2. Install required Customer Resource Definitions 
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.crds.yaml
+```
+
+<p align="center">
+    <img src="images/AddCRD.png">
+</p>
+
+3. Install Cert Manager using Helm
+```bash
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.13.2 
+```
+
+<p align="center">
+    <img src="images/CertHelmInstall.png">
+</p>
+
+4. Check all pods are running properly
+```bash
+kubectl get pods -n cert-manager
+```
+<p align="center">
+    <img src="images/CheckCertPods.png">
+</p>
+
+### Step 6: Deploy Rancher using Helm
+
+Rancher is installed using the Helm package manager for Kubernetes.
+
+1. Add the Helm Chart Repository - We will use the Sable version
+```bash
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+```
+
+<p align="center">
+    <img src="images/AddRancherHelmRepo.png">
+</p>
+
+2. Create a Namespace for Ranche
+```bash
+kubectl create namespace cattle-system
+```
+<p align="center">
+    <img src="images/AddRancherNS.png">
+</p>
+
