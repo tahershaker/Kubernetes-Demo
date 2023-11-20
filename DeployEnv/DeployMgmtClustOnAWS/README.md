@@ -458,6 +458,6 @@ kubectl create namespace cattle-system
 ```bash
 helm install rancher rancher-stable/rancher \
   --namespace cattle-system \
-  --set hostname=kube-demo-mgmt-netlb-01a-b940619f91deacbc.elb.eu-west-2.amazonaws.com \
+  --set hostname=<Put-FQDN> \
   --set bootstrapPassword=admin
 ```
