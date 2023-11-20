@@ -475,3 +475,24 @@ helm install rancher rancher-stable/rancher \
   --set hostname=<Put-FQDN> \
   --set bootstrapPassword=admin
 ```
+<p align="center">
+    <img src="images/DeployRancherHelm.png">
+</p>
+
+4. Check if deployment is rolled out
+```bash
+kubectl -n cattle-system rollout status deploy/rancher
+```
+<p align="center">
+    <img src="images/DeployRollOut.png">
+</p>
+
+5. Open a browser on your local machine and go to the httpd://LB-FQDN - You should now see the default initial config page of Rancher.
+<p align="center">
+    <img src="images/RancherDefaultPage.png">
+</p>
+
+6. Put the required initial configuration and click continue - You now should be ready to use Rancher
+<p align="center">
+    <img src="images/RancherPage.png">
+</p>
