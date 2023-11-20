@@ -303,7 +303,49 @@ kubectl get services ingress-nginx-controller --namespace=ingress-nginx
     <img src="images/IngressPorts.png">
 </p>
 
-8. In AWS, create 2 Target Groups (one for http port 80 and one for https port 443) with the port number you got and register the master node with these target groups
+8. In AWS, create 2 Target Groups (one for http port 80 and one for https port 443) with the port number you got from the above ingress output commands and register the master node with these target groups
+   - In AWS console, the search bar, type EC2 and click on it, then click on Target Groups under Load Balancing and then click on create target group.
+
+<p align="center">
+    <img src="images/tg01.png">
+</p>
+
+   - Configure the target group with the below configuration
+     - Choose a target type: `instance`
+     - Target group name: `kube-demo-mgmt-http-tg-01`
+     - Protocol: Port: `TCP - 80`
+     - VCP: `Choose kube-demo-mgmt-vcp-01`
+     - Click Next
+     - In the Available Instance, Click on the master node check box.
+     - In the Ports for the selected instances, enter the port associated with port 80 from the above ingress output commands
+     - Click Include as pending below button then click create target group
+
+<p align="center">
+    <img src="images/tg02.png">
+</p>
+
+<p align="center">
+    <img src="images/tg03.png">
+</p>
+
+   - Configure a Listener on the Load Balancer pointing to this target Group
+     - Click on Load balancer, Listener, then Add Listener 
+     - In the Listener details, Default Action Choose kube-demo-mgmt-http-tg-01, then click add
+
+<p align="center">
+    <img src="images/tg04.png">
+</p>
+
+   - Repeat the above to create another Target group with the below configuration 
+     - - Choose a target type: `instance`
+     - Target group name: `kube-demo-mgmt-https-tg-01`
+     - Protocol: Port: `TCP - 443`
+     - VCP: `Choose kube-demo-mgmt-vcp-01`
+     - In the Ports for the selected instances, enter the port associated with port 443 from the above ingress output commands
+
+<p align="center">
+    <img src="images/tg05.png">
+</p>
 
 9. Test Ingress is working properly
    - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yaml, then edit this file and copy the content of the yaml file in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/YamlFiles/TestIngress.yaml) and past it in the file you just created. Once pasted the content, change the `<put-your-loadbalancer-fqdn-here>` with your load balancer public IP FQDN that you got from running the first script which you should have saved it somewhere. The apply the file using `kubectl apply -f file-name.yaml` command
