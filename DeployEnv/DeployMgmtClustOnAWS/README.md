@@ -375,3 +375,14 @@ kubectl get ingress nginx-test-ingress -n nginx-testing
 <p align="center">
     <img src="images/UlrCheck.png">
 </p>
+
+### Step 4: Install Helm in your kubernetes
+
+As we are going to deploy multiple applications, it is easier to use Helm charts to deploy them. Also Rancher Manager is deployed through a Helm Chart. To install Helm , we will install Helm CLI using the below command. From the SSH Session to the Master Node copy and past the below command to install Helm. You can then check the installation using the command `helm version`
+- References: https://helm.sh/docs/intro/install/
+```bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+<p align="center">
+    <img src="images/HelmInstall.png">
+</p>
