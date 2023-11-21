@@ -516,7 +516,7 @@ kubectl -n cattle-system rollout status deploy/rancher
     <img src="images/RancherPage.png">
 </p>
 
---
+---
 
 One all the above steps are completed, you now have a fully functional kubernetes cluster with Rancher deployed on it.
 
