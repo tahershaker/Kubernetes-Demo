@@ -78,7 +78,7 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 3. Step 3: Install Ingress on the Kubernetes Cluster using provided step-by-step guide - [Link](#Step-3---Install-Ingress-on-the-Kubernetes-Cluster)
 4. Step 4: Install Helm in your kubernetes using provided step-by-step guide - [Link](#Step-4---Install-Helm-in-your-kubernetes)
 5. Step 5: Deploy and Install Cert Manager through Helm using provided step-by-step guide - [Link](#Step-5---Deploy-and-Install-Cert-Manager-through-Helm)
-6. Step 6: Deploy Rancher through Helm using provided step-by-step guide - [Link](#Step-6:-Deploy-Rancher-through-Helm)
+6. Step 6: Deploy Rancher through Helm using provided step-by-step guide - [Link](#Step-6---Deploy-Rancher-through-Helm)
 
 ---
 
