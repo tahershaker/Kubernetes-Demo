@@ -1,0 +1,31 @@
+#cloud-config
+---
+
+#This YAML file is a cloud-init configuration file used to bootstrap nodes in the environment.
+#This file is used to bootstrap configure the First Master Node in the Prod Cluster.
+
+#Redirect all output to the log file
+output: {all: '| tee -a /var/log/cloud-init-output.log'}
+
+#Set System config
+manage_etc_hosts: true
+manage_resolv_conf: true
+
+#Set Hostname and fqdn
+fqdn: kube-demo-prod-wn01.kube-demo.lab
+hostname: kube-demo-prod-wn01
+
+#Set Packages Update Configurations
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+#Write data to the required config files
+write_files:
+  - path: "/etc/cloud/templates/hosts.debian.tmpl"
+    content: |
+      127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+      ::1         localhost6 localhost6.localdomain6
+      10.10.11.100 kube-demo-prod-mn01
+      10.10.11.101 kube-demo-prod-wn01
+      10.10.11.102 kube-demo-prod-wn02

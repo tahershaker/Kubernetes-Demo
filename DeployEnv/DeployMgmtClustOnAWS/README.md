@@ -29,19 +29,19 @@ The three EC2 instance will then be configured with kubeadm to create a kubernet
 The architecture will be as follow:
 * One AWS Region - by default London Region - eu-west-2
 * One AWS Availability zone - by default the first AZ in the region
-* On VPC with the CIDR of 10.10.0.0/16 - default name is of kube-demo-vpc-01
+* On VPC with the CIDR of 10.10.0.0/16 - default name is of kube-demo-mgmt-vpc-01
 * Two Subnets
-  - Public Subnet with the CIDR of 10.10.10.0/24 - default name is kube-demo-pub-sub-01
-  - Private Subnet with the CIDR of 10.10.11.0/24 - default name is kube-demo-priv-sub-01
+  - Public Subnet with the CIDR of 10.10.10.0/24 - default name is kube-demo-mgmt-pub-sub-01
+  - Private Subnet with the CIDR of 10.10.11.0/24 - default name is kube-demo-mgmt-priv-sub-01
 * Two Security Groups (One for each subnet)
-  - Public Security Group allow tcp ports 22, 443, 6443 from any, any port from 10.10.0.0/16 - default name is kube-demo-pub-sg-01
-  - Private Security Group allowing any port from 10.10.0.0/16 - default name is kube-demo-priv-sg-01
-* NAT Gateway deployed in the public subnet and act as the GW for the private subnet - default name is of kube-demo-ngw-01
-* Internet Gateway attached to the VPC - default name is of kube-demo-igw-01
+  - Public Security Group allow tcp ports 22, 443, 6443 from any, any port from 10.10.0.0/16 - default name is kube-demo-mgmt-pub-sg-01
+  - Private Security Group allowing any port from 10.10.0.0/16 - default name is kube-demo-mgmt-priv-sg-01
+* NAT Gateway deployed in the public subnet and act as the GW for the private subnet - default name is of kube-demo-mgmt-ngw-01
+* Internet Gateway attached to the VPC - default name is of kube-demo-mgmt-igw-01
 * Two Routing tables (One for each subnet)
-  - Public Routing Table pointing to the Internet Gateway as the default gateway - default name is of kube-demo-pub-rt-01
-  - Private Routing Table pointing to the NAT Gateway as the default gateway - default name is of kube-demo-priv-rt-01
-* Network Load Balancer deployed in the public subnet for incoming traffic to the Master Node - default name is of kube-demo-nlb-01
+  - Public Routing Table pointing to the Internet Gateway as the default gateway - default name is of kube-demo-mgmt-pub-rt-01
+  - Private Routing Table pointing to the NAT Gateway as the default gateway - default name is of kube-demo-mgmt-priv-rt-01
+* Network Load Balancer deployed in the public subnet for incoming traffic to the Master Node - default name is of kube-demo-mgmt-nlb-01
 * Load Balancer Target Groups for the SSH traffic coming to the Master Node
 
 > Below PIC is a LLD for the Environment Architecture
