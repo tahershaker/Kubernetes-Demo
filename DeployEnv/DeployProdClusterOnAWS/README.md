@@ -467,6 +467,9 @@ kubectl get pods -n cert-manager
 ---
 
 ### Step 6 - Add Production Kubernetes Cluster To Rancher
+In this section we will be importing this production kubernetes cluster into the Rancher Manager deployed on the management cluster to be able to manage this cluster form the Rancher Manager.
+- References: https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-clusters-in-rancher-setup/register-existing-clusters
+
 
 
 
