@@ -164,3 +164,107 @@ nslookup <fqdn>
 </p>
 
 ---
+
+### Step 2 - Install Kubernetes Cluster on EC2 Instances
+
+Second Step we will be installing a Kubernetes Cluster using provided 2 scripts - [Master Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployProdClusterOnAWS/InstallFiles/InstallMasterNode.sh) & [Worker Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployProdClusterOnAWS/InstallFiles/InstallWrokerNode.sh) - that uses kubeadm to install and configure the kubernetes cluster.
+
+Please Note: In this step we will be accessing the Master Node using SSH, the KeyPair to be used with the SSH should be already in our local machine. Either you already have it or the script above will create it and download it to your local machine. By default the script will download it in the location where you ran the script and will have the name of kube-demo-key-pairs
+
+1. Change the permissions of the SSH KeyPair file
+```bash
+chmod 400 kube-demo-key-pairs.pem
+```
+<p align="center">
+    <img src="images/KeyPairExec.png">
+</p>
+
+2. Open the content of the KeyPair file and save is in a note pad
+```bash
+cat kube-demo-key-pairs.pem
+```
+<p align="center">
+    <img src="images/KeyPairCat.png">
+</p>
+
+3. Open 3 SSH sessions to the Master Node using the Load Balancer Public IP you got from the output of the previous script (you should have saved it somewhere)
+```bash
+ssh -i "kube-demo-key-pairs.pem" ubuntu@<Load-Balancer-Public-IP>
+```
+<p align="center">
+    <img src="images/SshToMaster.png">
+</p>
+
+4. In the First SSh session to the Master node, create a file with the same name as the KeyPair file and past the content of the Key that you have saved it in a note pad after executing point number 2. The change the permission of the SSH KeyPair file ou have just created the same way you did in point number 1
+```bash
+touch kube-demo-key-pairs.pem
+vi kube-demo-key-pairs.pem
+```
+<p align="center">
+    <img src="images/KeyPairCreate.png">
+</p>
+
+5. In the second and third SSH session to the Master Node, SSH to the first and second worker nodes
+   - SSH to the first worker node
+   ```bash
+   ssh -i "kube-demo-key-pairs.pem" ubuntu@kube-demo-prod-wn01
+   ```
+   - SSH to the first worker node
+   ```bash
+   ssh -i "kube-demo-key-pairs.pem" ubuntu@kube-demo-prod-wn02
+   ```
+<p align="center">
+    <img src="images/SshToWorker.png">
+</p>
+
+6. Now we need to install Kubernetes components on the Master node, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallMasterNode.sh) or use the below command in the first SSH session you opened to the Master node. Leave the script to run and monitor for any exceptions.
+```bash
+curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallMasterNode.sh | bash
+```
+<p align="center">
+    <img src="images/InstallMaster.png">
+</p>
+
+7. Now we need to install Kubernetes components on the 2 Worker nodes, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallWrokerNode.sh) or use the below command in the second and third SSH session you opened to the first and second worker nodes. Leave the script to run and monitor for any exceptions.
+```bash
+curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallWrokerNode.sh | bash
+```
+<p align="center">
+    <img src="images/InstallWorker.png">
+</p>
+
+8. After all the scripts are successfully completed, on the SSH session to the Master Node, you should have the kubeadm join command, if you done use the below command to get the join command.
+```bash
+sudo kubeadm token create --print-join-command
+```
+<p align="center">
+    <img src="images/JoinCommand.png">
+</p>
+
+9. Take the output of the join command and add sudo to the beginning of it and run it on the first and second worker nodes through the SSH session you have already opened or re-open if closed.
+<p align="center">
+    <img src="images/JoinCommandRun.png">
+</p>
+
+10. Install Calico CNI on Master node, copy and past the below command on the SSH Session for the Master Node
+```bash
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
+```
+
+11. Check the kubernetes cluster status and get the node using the below command form the SSH session of the Master node. The below command show give you 3 nodes (1 master, 2 workers) with all status are ready.
+```bash
+kubectl get nodes
+```
+<p align="center">
+    <img src="images/GetNodes.png">
+</p>
+
+12. Ensure all pods are running with not exceptions to any pod
+```bash
+kubectl get pods -A
+```
+<p align="center">
+    <img src="images/GetPods.png">
+</p>
+
+---
