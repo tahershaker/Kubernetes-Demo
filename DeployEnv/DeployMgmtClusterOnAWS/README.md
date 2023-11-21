@@ -84,7 +84,7 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 
 ### Step 1 - Deploy AWS Infrastructure
 
-First step in this guide is to deploy the AWS infrastructure based on the provided architecture. To help in this process, and automation script is provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/AwsDeployMgmtCluster.sh) that will automatically deploy all the AWS infrastructure. Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
+First step in this guide is to deploy the AWS infrastructure based on the provided architecture. To help in this process, and automation script is provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/AwsDeployMgmtCluster.sh) that will automatically deploy all the AWS infrastructure. Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
 
 Unfortunately, all the variables are hard-coded in to the script and development is in place to allow passing argument to the script to provide the ability to change the variables. These variable will hold the Region, Name Prefix, IP Addresses, Folder Location and more. List of the variables that are hard-coded are:
 
@@ -168,7 +168,7 @@ nslookup <fqdn>
 
 ### Step 2 - Install Kubernetes Cluster on EC2 Instances
 
-Second Step we will be installing a Kubernetes Cluster using provided 2 scripts - [Master Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallMasterNode.sh) & [Worker Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallWrokerNode.sh) - that uses kubeadm to install and configure the kubernetes cluster.
+Second Step we will be installing a Kubernetes Cluster using provided 2 scripts - [Master Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallMasterNode.sh) & [Worker Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallWrokerNode.sh) - that uses kubeadm to install and configure the kubernetes cluster.
 
 Please Note: In this step we will be accessing the Master Node using SSH, the KeyPair to be used with the SSH should be already in our local machine. Either you already have it or the script above will create it and download it to your local machine. By default the script will download it in the location where you ran the script and will have the name of kube-demo-key-pairs
 
@@ -218,7 +218,7 @@ vi kube-demo-key-pairs.pem
     <img src="images/SshToWorker.png">
 </p>
 
-6. Now we need to install Kubernetes components on the Master node, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallMasterNode.sh) or use the below command in the first SSH session you opened to the Master node. Leave the script to run and monitor for any exceptions.
+6. Now we need to install Kubernetes components on the Master node, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallMasterNode.sh) or use the below command in the first SSH session you opened to the Master node. Leave the script to run and monitor for any exceptions.
 ```bash
 curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallMasterNode.sh | bash
 ```
@@ -226,7 +226,7 @@ curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEn
     <img src="images/InstallMaster.png">
 </p>
 
-7. Now we need to install Kubernetes components on the 2 Worker nodes, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallWrokerNode.sh) or use the below command in the second and third SSH session you opened to the first and second worker nodes. Leave the script to run and monitor for any exceptions.
+7. Now we need to install Kubernetes components on the 2 Worker nodes, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallWrokerNode.sh) or use the below command in the second and third SSH session you opened to the first and second worker nodes. Leave the script to run and monitor for any exceptions.
 ```bash
 curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallWrokerNode.sh | bash
 ```
@@ -374,7 +374,7 @@ kubectl get services ingress-nginx-controller --namespace=ingress-nginx
 </p>
 
 9. Test Ingress is working properly
-   - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yaml, then edit this file and copy the content of the yaml file in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/YamlFiles/TestIngress.yaml) and past it in the file you just created. Once pasted the content, change the `<put-your-loadbalancer-fqdn-here>` with your load balancer public IP FQDN that you got from running the first script which you should have saved it somewhere. The apply the file using `kubectl apply -f file-name.yaml` command
+   - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yaml, then edit this file and copy the content of the yaml file in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/YamlFiles/TestIngress.yaml) and past it in the file you just created. Once pasted the content, change the `<put-your-loadbalancer-fqdn-here>` with your load balancer public IP FQDN that you got from running the first script which you should have saved it somewhere. The apply the file using `kubectl apply -f file-name.yaml` command
 ```bash
 touch yaml-config/nginx-ingress/test-ingress.yaml
 vi yaml-config/nginx-ingress/test-ingress.yaml
