@@ -60,6 +60,7 @@ To use this repo, there are several steps to be executed which most of the are a
    - Once this is completed, the management cluster will be up and running and all management components (including Rancher Manager) will be deployed.
 2. Deploy the Prod Environment
    - To complete this step, please complete all actions listed in this [link](https://github.com/tahershaker/Kubernetes-Demo/tree/main/DeployEnv/DeployProdClusterOnAWS).
+   - Once this is completed, the production cluster will be up and running and all workload application and components will be deployed.
 
 ---
 
