@@ -268,3 +268,138 @@ kubectl get pods -A
 </p>
 
 ---
+
+
+### Step 3 - Install Ingress on the Kubernetes Cluster
+
+In this step we will be installing Ingress on our kubernetes cluster to be used to access different applications deployed on the cluster such as the Rancher manager itself.
+
+1. SSH to the Master node and create a folder to add all yaml files that will be used with the demo. Then create a sub-folder to download the Nginx Ingress Yaml file to it
+```bash
+mkdir yaml-config
+mkdir yaml-config/nginx-ingress
+```
+<p align="center">
+    <img src="images/CreateFolder.png">
+</p>
+
+2. Open a web-browser on your local machine and download the yaml file to your local machine from this URL: https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml
+
+3. When deploying Rancher Manager using Helm Chart, note that the Rancher Helm chart does not set an `ingressClassName` on the ingress by default. Because of this, you have to configure the Ingress controller to also watch ingresses without an `ingressClassName`
+- Reference: https://ranchermanager.docs.rancher.com/pages-for-subheaders/install-upgrade-on-a-kubernetes-cluster
+- Reference: https://kubernetes.github.io/ingress-nginx/user-guide/k8s-122-migration/#what-is-the-flag-watch-ingress-without-class
+   - To do so, we need to add the argument `--watch-ingress-without-class=true` in the downloaded yaml file.
+     - Open the Yaml file with an editor of your choice (ex: VSCode)
+     - After line number 424 where the container sepc section is and argument, add the argument `--watch-ingress-without-class=true`
+     - Save the file after editing it
+<p align="center">
+    <img src="images/ArgAdded.png">
+</p>
+
+4. In the SSH session to the master node, create a file called deploy.yaml in the folder yaml-config/nginx-ingress then copy the content of the deploy yaml file in your local machine to this file.
+```bash
+touch yaml-config/nginx-ingress/deploy.yaml
+vi yaml-config/nginx-ingress/deploy.yaml
+```
+<p align="center">
+    <img src="images/CreateFile.png">
+</p>
+
+5. Deploy the Nginx Ingress Controller
+```bash
+kubectl apply -f yaml-config/nginx-ingress/deploy.yaml
+```
+<p align="center">
+    <img src="images/DeployIngress.png">
+</p>
+
+6. Ensure Nginx Ingress Controller pod is running
+```bash
+kubectl get pods -n ingress-nginx
+```
+<p align="center">
+    <img src="images/IngressPod.png">
+</p>
+
+7. Get the port numbers that Ingress listen for port 80 and 443 and save them somewhere
+```bash
+kubectl get services ingress-nginx-controller --namespace=ingress-nginx
+```
+<p align="center">
+    <img src="images/IngressPorts.png">
+</p>
+
+8. In AWS, create 2 Target Groups (one for http port 80 and one for https port 443) with the port number you got from the above ingress output commands and register the master node with these target groups
+   - In AWS console, the search bar, type EC2 and click on it, then click on Target Groups under Load Balancing and then click on create target group.
+
+<p align="center">
+    <img src="images/tg01.png">
+</p>
+
+   - Configure the target group with the below configuration
+     - Choose a target type: `instance`
+     - Target group name: `kube-demo-prod-http-tg-01`
+     - Protocol: Port: `TCP - 80`
+     - VCP: `Choose kube-demo-prod-vcp-01`
+     - Click Next
+     - In the Available Instance, Click on the master node check box.
+     - In the Ports for the selected instances, enter the port associated with port 80 from the above ingress output commands
+     - Click Include as pending below button then click create target group
+
+<p align="center">
+    <img src="images/tg02.png">
+</p>
+
+<p align="center">
+    <img src="images/tg03.png">
+</p>
+
+   - Configure a Listener on the Load Balancer pointing to this target Group
+     - Click on Load balancer, Listener, then Add Listener 
+     - In the Listener details, Default Action Choose kube-demo-prod-http-tg-01, then click add
+
+<p align="center">
+    <img src="images/tg04.png">
+</p>
+
+   - Repeat the above to create another Target group with the below configuration 
+     - - Choose a target type: `instance`
+     - Target group name: `kube-demo-prod-https-tg-01`
+     - Protocol: Port: `TCP - 443`
+     - VCP: `Choose kube-demo-prod-vcp-01`
+     - In the Ports for the selected instances, enter the port associated with port 443 from the above ingress output commands
+
+<p align="center">
+    <img src="images/tg05.png">
+</p>
+
+9. Test Ingress is working properly
+   - On the SSh Session to the master node, create a file in the directly yaml-config/nginx-ingress with the name test-ingress.yaml, then edit this file and copy the content of the yaml file in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployProdClusterOnAWS/YamlFiles/TestIngress.yaml) and past it in the file you just created. Once pasted the content, change the `<put-your-loadbalancer-fqdn-here>` with your load balancer public IP FQDN that you got from running the first script which you should have saved it somewhere. The apply the file using `kubectl apply -f file-name.yaml` command
+```bash
+touch yaml-config/nginx-ingress/test-ingress.yaml
+vi yaml-config/nginx-ingress/test-ingress.yaml
+kubectl apply -f yaml-config/nginx-ingress/test-ingress.yaml
+```
+<p align="center">
+    <img src="images/ChangeUrl.png">
+</p>
+
+<p align="center">
+    <img src="images/DeployTestIngress.png">
+</p>
+ 
+   - Check the Ingress is deployed properly 
+```bash
+kubectl get ingress nginx-test-ingress -n nginx-testing
+```
+<p align="center">
+    <img src="images/CheckIngress.png">
+</p>
+
+   - Open the URL to check if the implementation is working properly using the URL `http://kube-demo-mgmt-netlb-01a-b940619f91deacbc.elb.eu-west-2.amazonaws.com/nginx`
+
+<p align="center">
+    <img src="images/UlrCheck.png">
+</p>
+
+---
