@@ -83,7 +83,7 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 
 ### Step 1 - Deploy AWS Infrastructure
 
-First step in this guide is to deploy the AWS infrastructure based on the provided architecture. To help in this process, and automation script is provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployProdClustOnAWS/AwsDeployProdCluster.sh) that will automatically deploy all the AWS infrastructure. Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
+First step in this guide is to deploy the AWS infrastructure based on the provided architecture. To help in this process, and automation script is provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployProdClusterOnAWS/AwsDeployProdCluster.sh) that will automatically deploy all the AWS infrastructure. Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
 
 Unfortunately, all the variables are hard-coded in to the script and development is in place to allow passing argument to the script to provide the ability to change the variables. These variable will hold the Region, Name Prefix, IP Addresses, Folder Location and more. List of the variables that are hard-coded are:
 
