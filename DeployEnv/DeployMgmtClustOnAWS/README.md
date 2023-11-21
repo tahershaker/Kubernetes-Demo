@@ -73,16 +73,16 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 
 > Summary 
 
-1. Step 1: Deploy AWS Infrastructure using provided bash/AWS CLI script - [Link](### Step 1: Deploy AWS Infrastructure using provided Bash/AWS CLI script)
-2. Step 2: Install Kubernetes Cluster on EC2 Instances using provided bash/Kubeadm script - [Link](### Step 2: Install Kubernetes Cluster on EC2 Instances using Kubeadm)
-3. Step 3: Install Ingress on the Kubernetes Cluster using provided step-by-step guide - [Link](### Step 3: Install Ingress on the Kubernetes Cluster)
-4. Step 4: Install Helm in your kubernetes using provided step-by-step guide - [Link](### Step 4: Install Helm in your kubernetes)
-5. Step 5: Deploy and Install Cert Manager through Helm using provided step-by-step guide - [Link](### Step 5: Deploy and Install Cert Manager using Helm)
-6. Step 6: Deploy Rancher through Helm using provided step-by-step guide - [Link](### Step 6: Deploy Rancher through Helm)
+1. Step 1: Deploy AWS Infrastructure using provided bash/AWS CLI script - [Link](#Step-1:-Deploy-AWS-Infrastructure)
+2. Step 2: Install Kubernetes Cluster on EC2 Instances using provided bash/Kubeadm script - [Link](#Step-2:-Install-Kubernetes-Cluster-on-EC2-Instances)
+3. Step 3: Install Ingress on the Kubernetes Cluster using provided step-by-step guide - [Link](#Step-3:-Install-Ingress-on-the-Kubernetes-Cluster)
+4. Step 4: Install Helm in your kubernetes using provided step-by-step guide - [Link](#Step-4:-Install-Helm-in-your-kubernetes)
+5. Step 5: Deploy and Install Cert Manager through Helm using provided step-by-step guide - [Link](#Step-5:-Deploy-and-Install-Cert-Manager-through-Helm)
+6. Step 6: Deploy Rancher through Helm using provided step-by-step guide - [Link](#Step-6:-Deploy-Rancher-through-Helm)
 
 ---
 
-### Step 1: Deploy AWS Infrastructure using provided Bash/AWS CLI script
+### Step 1: Deploy AWS Infrastructure
 
 First step in this guide is to deploy the AWS infrastructure based on the provided architecture. To help in this process, and automation script is provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/AwsDeployMgmtCluster.sh) that will automatically deploy all the AWS infrastructure. Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
 
@@ -166,9 +166,11 @@ nslookup <fqdn>
 
 ---
 
-### Step 2: Install Kubernetes Cluster on EC2 Instances using Kubeadm
+### Step 2: Install Kubernetes Cluster on EC2 Instances
 
-> Please Note: In this step we will be accessing the Master Node using SSH, the KeyPair to be used with the SSH should be already in our local machine. Either you already have it or the script above will create it and download it to your local machine. By default the script will download it in the location where you ran the script and will have the name of kube-demo-key-pairs
+Second Step we will be installing a Kubernetes Cluster using provided scripts - [Master Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallMasterNode.sh) & [Worker Node Installation Script](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallWrokerNode.sh) that uses kubeadm to install and configure the kubernetes cluster.
+
+Please Note: In this step we will be accessing the Master Node using SSH, the KeyPair to be used with the SSH should be already in our local machine. Either you already have it or the script above will create it and download it to your local machine. By default the script will download it in the location where you ran the script and will have the name of kube-demo-key-pairs
 
 1. Change the permissions of the SSH KeyPair file
 ```bash
@@ -269,6 +271,8 @@ kubectl get pods -A
 ---
 
 ### Step 3: Install Ingress on the Kubernetes Cluster
+
+In this step we will be installing Ingress on our kubernetes cluster to be used to access different applications deployed on the cluster such as the Rancher manager itself.
 
 1. SSH to the Master node and create a folder to add all yaml files that will be used with the demo. Then create a sub-folder to download the Nginx Ingress Yaml file to it
 ```bash
@@ -402,7 +406,9 @@ kubectl get ingress nginx-test-ingress -n nginx-testing
 
 ### Step 4: Install Helm in your kubernetes
 
-As we are going to deploy multiple applications, it is easier to use Helm charts to deploy them. Also Rancher Manager is deployed through a Helm Chart. To install Helm , we will install Helm CLI using the below command. From the SSH Session to the Master Node copy and past the below command to install Helm. You can then check the installation using the command `helm version`
+In this step we will be installing Helm on our kubernetes cluster. As we are going to deploy multiple applications, it is easier to use Helm charts to deploy them. Also Rancher Manager is deployed through a Helm Chart. To install Helm , we will install Helm CLI using the below command. 
+
+1. From the SSH Session to the Master Node copy and past the below command to install Helm. You can then check the installation using the command `helm version`
 - References: https://helm.sh/docs/intro/install/
 ```bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -415,7 +421,7 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 ### Step 5: Deploy and Install Cert Manager through Helm
 
-As Rancher management server is designed to be secure by default and requires SSL/TLS configuration, we will be installing Cert Manager to you kubernetes cluster using Helm charts. On the Master Node using the SSH Session, do the following:
+In this step we will be deploying Cert Manager in our kubernetes cluster. As Rancher management server is designed to be secure by default and requires SSL/TLS configuration, we will be installing Cert Manager to you kubernetes cluster using Helm charts. On the Master Node using the SSH Session, do the following:
 - References: https://cert-manager.io/docs/installation/helm/
 
 1. Add repo to helm to download Cert manager from and update Helm
@@ -462,7 +468,7 @@ kubectl get pods -n cert-manager
 
 ### Step 6: Deploy Rancher through Helm
 
-Rancher is installed using the Helm package manager for Kubernetes.
+In this step we will be deploying the Rancher Manager on out kubernetes cluster. Rancher is installed using the Helm package manager for Kubernetes.
 - References: https://ranchermanager.docs.rancher.com/pages-for-subheaders/install-upgrade-on-a-kubernetes-cluster
 
 1. Add the Helm Chart Repository - We will use the Sable version
@@ -474,7 +480,7 @@ helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
     <img src="images/AddRancherHelmRepo.png">
 </p>
 
-2. Create a Namespace for Ranche
+2. Create a Namespace for Rancher
 ```bash
 kubectl create namespace cattle-system
 ```
@@ -501,7 +507,7 @@ kubectl -n cattle-system rollout status deploy/rancher
     <img src="images/DeployRollOut.png">
 </p>
 
-5. Open a browser on your local machine and go to the httpd://LB-FQDN - You should now see the default initial config page of Rancher.
+5. Open a browser on your local machine and go to the https://LB-FQDN - You should now see the default initial config page of Rancher.
 <p align="center">
     <img src="images/RancherDefaultPage.png">
 </p>
