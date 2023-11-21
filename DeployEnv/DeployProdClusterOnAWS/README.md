@@ -73,12 +73,12 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 
 > Summary 
 
-1. Step 1: Deploy AWS Infrastructure using provided bash/AWS CLI script - [Link](#Step-1---Deploy-AWS-Infrastructure)
-2. Step 2: Install Kubernetes Cluster on EC2 Instances using provided bash/Kubeadm script - [Link](#Step-2---Install-Kubernetes-Cluster-on-EC2-Instances)
-3. Step 3: Install Ingress on the Kubernetes Cluster using provided step-by-step guide - [Link](#Step-3---Install-Ingress-on-the-Kubernetes-Cluster)
-4. Step 4: Install Helm in your kubernetes using provided step-by-step guide - [Link](#Step-4---Install-Helm-in-your-kubernetes)
-5. Step 5: Deploy and Install Cert Manager through Helm using provided step-by-step guide - [Link](#Step-5---Deploy-and-Install-Cert-Manager-through-Helm)
-
+1. Step 1 - Deploy AWS Infrastructure using provided bash/AWS CLI script - [Link](#Step-1---Deploy-AWS-Infrastructure)
+2. Step 2 - Install Kubernetes Cluster on EC2 Instances using provided bash/Kubeadm script - [Link](#Step-2---Install-Kubernetes-Cluster-on-EC2-Instances)
+3. Step 3 - Install Ingress on the Kubernetes Cluster using provided step-by-step guide - [Link](#Step-3---Install-Ingress-on-the-Kubernetes-Cluster)
+4. Step 4 - Install Helm in your kubernetes using provided step-by-step guide - [Link](#Step-4---Install-Helm-in-your-kubernetes)
+5. Step 5 - Deploy and Install Cert Manager through Helm using provided step-by-step guide - [Link](#Step-5---Deploy-and-Install-Cert-Manager-through-Helm)
+6. Step 6 - Add Production Kubernetes Cluster To Rancher using provided step-by-step guide - [Link](#Step-6---Add-Production-Kubernetes-Cluster-To-Rancher)
 ---
 
 ### Step 1 - Deploy AWS Infrastructure
@@ -396,10 +396,85 @@ kubectl get ingress nginx-test-ingress -n nginx-testing
     <img src="images/CheckIngress.png">
 </p>
 
-   - Open the URL to check if the implementation is working properly using the URL `http://kube-demo-mgmt-netlb-01a-b940619f91deacbc.elb.eu-west-2.amazonaws.com/nginx`
+   - Open the URL to check if the implementation is working properly using the URL `http://kube-demo-prod-netlb-01a-5931524dc8c3574e.elb.eu-west-2.amazonaws.com/nginx`
 
 <p align="center">
     <img src="images/UlrCheck.png">
 </p>
 
 ---
+
+### Step 4 - Install Helm in your kubernetes
+
+In this step we will be installing Helm on our kubernetes cluster. As we are going to deploy multiple applications, it is easier to use Helm charts to deploy them. To install Helm , we will install Helm CLI using the below command. 
+- References: https://helm.sh/docs/intro/install/
+1. From the SSH Session to the Master Node copy and past the below command to install Helm. You can then check the installation using the command `helm version`
+```bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+<p align="center">
+    <img src="images/HelmInstall.png">
+</p>
+
+---
+
+
+### Step 5 - Deploy and Install Cert Manager through Helm
+
+In this step we will be deploying Cert Manager in our kubernetes cluster. As Rancher management server is designed to be secure by default and requires SSL/TLS configuration, we will be installing Cert Manager to you kubernetes cluster using Helm charts. On the Master Node using the SSH Session, do the following:
+- References: https://cert-manager.io/docs/installation/helm/
+
+1. Add repo to helm to download Cert manager from and update Helm
+```bash
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+```
+
+<p align="center">
+    <img src="images/AddHelmRepo.png">
+</p>
+
+2. Install required Customer Resource Definitions 
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.crds.yaml
+```
+
+<p align="center">
+    <img src="images/AddCRD.png">
+</p>
+
+3. Install Cert Manager using Helm
+```bash
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.13.2 
+```
+
+<p align="center">
+    <img src="images/CertHelmInstall.png">
+</p>
+
+4. Check all pods are running properly
+```bash
+kubectl get pods -n cert-manager
+```
+<p align="center">
+    <img src="images/CheckCertPods.png">
+</p>
+
+---
+
+### Step 6 - Add Production Kubernetes Cluster To Rancher
+
+
+
+---
+
+
+One all the above steps are completed, you now have a fully functional kubernetes cluster and imported into Rancher.
+
+---
+
+**Enjoy** :blush:
