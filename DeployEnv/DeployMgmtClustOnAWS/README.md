@@ -73,7 +73,7 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 
 > Summary 
 
-1. Step 1: Deploy AWS Infrastructure using provided bash/AWS CLI script - [Link](#Step-1-Deploy-AWS-Infrastructure)
+1. Step 1: Deploy AWS Infrastructure using provided bash/AWS CLI script - [Link](#Step-1---Deploy-AWS-Infrastructure)
 2. Step 2: Install Kubernetes Cluster on EC2 Instances using provided bash/Kubeadm script - [Link](#Step-2:-Install-Kubernetes-Cluster-on-EC2-Instances)
 3. Step 3: Install Ingress on the Kubernetes Cluster using provided step-by-step guide - [Link](#Step-3:-Install-Ingress-on-the-Kubernetes-Cluster)
 4. Step 4: Install Helm in your kubernetes using provided step-by-step guide - [Link](#Step-4:-Install-Helm-in-your-kubernetes)
@@ -82,7 +82,7 @@ Please follow the below step-by-step guide to deploy the Management Cluster
 
 ---
 
-### Step 1 Deploy AWS Infrastructure
+### Step 1 - Deploy AWS Infrastructure
 
 First step in this guide is to deploy the AWS infrastructure based on the provided architecture. To help in this process, and automation script is provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClustOnAWS/AwsDeployMgmtCluster.sh) that will automatically deploy all the AWS infrastructure. Please Note: To run the script, first you need to download the repo and add the AWS credentials to the AWS CLI.
 
