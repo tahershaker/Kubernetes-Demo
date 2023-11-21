@@ -219,7 +219,7 @@ vi kube-demo-key-pairs.pem
 
 6. Now we need to install Kubernetes components on the Master node, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallMasterNode.sh) or use the below command in the first SSH session you opened to the Master node. Leave the script to run and monitor for any exceptions.
 ```bash
-curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallMasterNode.sh | bash
+curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployProdClusterOnAWS/InstallFiles/InstallMasterNode.sh | bash
 ```
 <p align="center">
     <img src="images/InstallMaster.png">
@@ -227,7 +227,7 @@ curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEn
 
 7. Now we need to install Kubernetes components on the 2 Worker nodes, you can copy and past the script provided in this [link](https://github.com/tahershaker/Kubernetes-Demo/blob/main/DeployEnv/DeployMgmtClusterOnAWS/InstallFiles/InstallWrokerNode.sh) or use the below command in the second and third SSH session you opened to the first and second worker nodes. Leave the script to run and monitor for any exceptions.
 ```bash
-curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployMgmtClustOnAWS/InstallFiles/InstallWrokerNode.sh | bash
+curl https://raw.githubusercontent.com/tahershaker/Kubernetes-Demo/main/DeployEnv/DeployProdClusterOnAWS/InstallFiles/InstallWrokerNode.sh | bash
 ```
 <p align="center">
     <img src="images/InstallWorker.png">

@@ -26,6 +26,6 @@ write_files:
     content: |
       127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
       ::1         localhost6 localhost6.localdomain6
-      10.10.11.100 kube-demo-prod-mn01
-      10.10.11.101 kube-demo-prod-wn01
-      10.10.11.102 kube-demo-prod-wn02
+      10.11.11.100 kube-demo-prod-mn01
+      10.11.11.101 kube-demo-prod-wn01
+      10.11.11.102 kube-demo-prod-wn02
